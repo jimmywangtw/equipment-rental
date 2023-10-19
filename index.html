@@ -7,48 +7,95 @@
   <body>
     <h2>山旅戶外裝備租借</h2>
     <h3>請選擇租借時間</h3>
-    <label for="start-date">起始日期：</label>
-    <input type="date" id="start-date" name="start-date" />
-    <label for="end-date">結束日期：</label>
-    <input type="date" id="end-date" name="end-date" />
+    <div class="date-choose">
+      <label for="start-date">起始日期：</label>
+      <input type="date" id="start-date" name="start-date" />
+      <label for="end-date">結束日期：</label>
+      <input type="date" id="end-date" name="end-date" />
+      <div id="total-days"></div>
+    </div>
+
     <form>
+      <h2>表單頭</h2>
       <div>
         <input type="submit" />
       </div>
     </form>
     <div id="result"></div>
     <script>
-      function fetchData() {
-        let startDate = document.getElementById("start-date").value;
-        let endDate = document.getElementById("end-date").value;
+      const endDateInput = document.querySelector("#end-date");
+      const startDateInput = document.querySelector("#start-date");
+      const dateChoose = document.querySelector(".date-choose");
 
-        if (startDate && endDate) {
-          fetch(`https://jsonplaceholder.typicode.com/posts/1`)
+      function fetchData() {
+        if (startDateInput.value && endDateInput.value) {
+          fetch(`https://dummyjson.com/products`)
             .then((response) => response.json())
             .then((data) => {
               var resultDiv = document.getElementById("result");
 
-              console.log(data);
-              var p = document.createElement("p");
-              p.textContent = `${data.title}, ${startDate}, ${endDate}`;
-              resultDiv.appendChild(p);
+              countDiffDays();
+              //將日期值插入表格
+              insertDateToForm();
+
+              console.log(data.products);
+
+              // var p = document.createElement("p");
+              // p.textContent = `${data.title}, ${startDate}, ${endDate}`;
+              // resultDiv.appendChild(p);
             })
             .catch((error) => console.error("錯誤：", error));
         }
       }
 
+      function insertDateToForm() {
+        const hiddenStartDate = document.createElement("input");
+        hiddenStartDate.type = "hidden";
+        hiddenStartDate.name = "hiddenStartDate";
+        hiddenStartDate.value = startDateInput.value;
+        document.querySelector("form").appendChild(hiddenStartDate);
+
+        const hiddenEndDate = document.createElement("input");
+        hiddenEndDate.type = "hidden";
+        hiddenEndDate.name = "hiddenEndDate";
+        hiddenEndDate.value = endDateInput.value;
+        document.querySelector("form").appendChild(hiddenEndDate);
+      }
+
+      function countDiffDays() {
+        //計算日期差
+        const start = new Date(startDateInput.value);
+        const end = new Date(endDateInput.value);
+        const diffTime = Math.abs(end - start);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        //顯示日期結果
+        const totalDays = document.querySelector("#total-days");
+        if (totalDays.children.length === 0) {
+          const p = document.createElement("p");
+          p.textContent = `共${diffDays}天`;
+          totalDays.appendChild(p);
+        } else {
+          const p = totalDays.children[0];
+          p.textContent = `共${diffDays}天`;
+        }
+      }
+
+      //設定時間欄位的最小日期
       const today = new Date();
       const tomorrow = new Date(today);
       tomorrow.setDate(today.getDate() + 1);
       const todayString = today.toISOString().split("T")[0];
       const tomorrowString = tomorrow.toISOString().split("T")[0];
 
+      //時間選擇modal加上min屬性
+      document.querySelector("#start-date").setAttribute("min", todayString);
+      document.querySelector("#end-date").setAttribute("min", tomorrowString);
+      //兩個日期改變就抓資料
       document
         .querySelector("#start-date")
         .addEventListener("change", fetchData);
-      document.querySelector("#start-date").setAttribute("min", todayString);
       document.querySelector("#end-date").addEventListener("change", fetchData);
-      document.querySelector("#end-date").setAttribute("min", tomorrowString);
     </script>
   </body>
 </html>
