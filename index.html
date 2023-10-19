@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>裝備預約網站</title>
+  </head>
+  <body>
+    <h2>山旅戶外裝備租借</h2>
+    <h3>請選擇租借時間</h3>
+    <label for="start-date">起始日期：</label>
+    <input type="date" id="start-date" name="start-date" />
+    <label for="end-date">結束日期：</label>
+    <input type="date" id="end-date" name="end-date" />
+    <form>
+      <div>
+        <input type="submit" />
+      </div>
+    </form>
+    <div id="result"></div>
+    <script>
+      function fetchData() {
+        let startDate = document.getElementById("start-date").value;
+        let endDate = document.getElementById("end-date").value;
+
+        if (startDate && endDate) {
+          fetch(`https://jsonplaceholder.typicode.com/posts/1`)
+            .then((response) => response.json())
+            .then((data) => {
+              var resultDiv = document.getElementById("result");
+
+              console.log(data);
+              var p = document.createElement("p");
+              p.textContent = `${data.title}, ${startDate}, ${endDate}`;
+              resultDiv.appendChild(p);
+            })
+            .catch((error) => console.error("錯誤：", error));
+        }
+      }
+
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(today.getDate() + 1);
+      const todayString = today.toISOString().split("T")[0];
+      const tomorrowString = tomorrow.toISOString().split("T")[0];
+
+      document
+        .querySelector("#start-date")
+        .addEventListener("change", fetchData);
+      document.querySelector("#start-date").setAttribute("min", todayString);
+      document.querySelector("#end-date").addEventListener("change", fetchData);
+      document.querySelector("#end-date").setAttribute("min", tomorrowString);
+    </script>
+  </body>
+</html>
