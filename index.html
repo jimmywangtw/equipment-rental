@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8" />
     <title>裝備預約網站</title>
+    <link rel="stylesheet" href="./styles/index.css" />
   </head>
   <body>
     <h2>山旅戶外裝備租借</h2>
@@ -15,26 +16,17 @@
       <div id="total-days"></div>
     </div>
 
-    <div
-      class="cart"
-      style="
-        position: -webkit-sticky;
-        position: sticky;
-        top: 25%;
-        float: right;
-        width: fit-content;
-        margin-right: 20px;
-        border: 1px solid black;
-        color: blue;
-      "
-    >
+    <div class="cart">
       <h3 class="cart-title">購物車</h3>
+      <div class="cart-duration"></div>
       <div id="cart-list">
         <p>目前無選擇任何商品</p>
       </div>
     </div>
-
-    <div id="rental-items"></div>
+    <div class="rental">
+      <h3 class="rental-title"></h3>
+      <ul id="rental-items"></ul>
+    </div>
 
     <form>
       <div>
@@ -47,9 +39,8 @@
       const startDateInput = document.querySelector("#start-date");
       const dateSelect = document.querySelector(".date-select");
       const rentalItems = document.querySelector("#rental-items");
-      const order = { duration: [], items: {} }; // {duration: [2023-10-10, 2023-10-17], items:{}}
-
-      let ulItems;
+      const ul = document.querySelector("#rental-items");
+      const order = { duration: { start: "start", end: "end" }, items: {} }; // {duration: [2023-10-10, 2023-10-17], items:{}}
 
       function fetchData() {
         const dataURL = "https://dummyjson.com/products";
@@ -69,7 +60,8 @@
               showItemsSelectTitle();
               //購物車顯示租借時間
               showRentalDuration(startDateInput.value, endDateInput.value);
-
+              //重整清單先清空現有的
+              ul.innerHTML = "";
               data.products.map((product, key) => {
                 printItemsList(product, key);
               });
@@ -114,23 +106,17 @@
       }
 
       function showItemsSelectTitle() {
-        const h3 = document.createElement("h3");
+        const h3 = document.querySelector(".rental-title");
         h3.textContent = "請選擇租借項目";
-        rentalItems.appendChild(h3);
-        ulItems = document.createElement("ul");
-        rentalItems.appendChild(ulItems);
       }
 
       function showRentalDuration(start, end) {
-        const div = document.createElement("div");
-        const cartTitle = document.querySelector(".cart-title");
-        div.textContent = `租借日期: ${start} ~ ${end}`;
-        cartTitle.appendChild(div);
+        const cartDuration = document.querySelector(".cart-duration");
+        cartDuration.textContent = `租借日期: ${start} ~ ${end}`;
       }
 
       function printItemsList(product, key) {
-        const title = product.title;
-        let stock = product.stock;
+        const { title, stock } = product;
 
         const li = document.createElement("li");
         const buttonGroup = document.createElement("div");
@@ -167,7 +153,7 @@
         li.appendChild(itemInfo);
         li.appendChild(buttonGroup);
 
-        ulItems.appendChild(li);
+        ul.appendChild(li);
       }
 
       function handleItemObject(title, number) {
