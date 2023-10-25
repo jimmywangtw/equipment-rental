@@ -1,0 +1,26 @@
+{
+  "name": "equipment-rental",
+  "version": "1.0.0",
+  "description": "equipment rental webapp",
+  "main": "./scripts/index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "browser-sync start --server --files \"*.css, *.html, *.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jimmywangtw/equipment-rental.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jimmywangtw/equipment-rental/issues"
+  },
+  "homepage": "https://github.com/jimmywangtw/equipment-rental#readme",
+  "dependencies": {
+    "browser-sync": "^2.29.3"
+  }
+}
