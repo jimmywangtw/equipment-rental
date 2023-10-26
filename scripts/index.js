@@ -1,5 +1,7 @@
 const endDateInput = document.querySelector("#end_date");
 const startDateInput = document.querySelector("#start_date");
+const userNameInput = document.querySelector("#user_name")
+const phoneInput = document.querySelector("#phone")
 const dateSelect = document.querySelector(".date_select");
 const rentalItems = document.querySelector("#rental_items");
 const ul = document.querySelector("#rental_items");
@@ -106,7 +108,7 @@ function printItemsList(product, key) {
         numberDisplay.textContent = number;
         handleItemObject(title, number);
         updateCart();
-        orderValueToForm()
+
     });
 
     plusButton.addEventListener("click", () => {
@@ -114,7 +116,6 @@ function printItemsList(product, key) {
         numberDisplay.textContent = number;
         handleItemObject(title, number);
         updateCart();
-        orderValueToForm()
     });
 
     itemInfo.textContent = `${title}, 剩餘數量: ${stock}`;
@@ -130,30 +131,35 @@ function printItemsList(product, key) {
 
 function handleItemObject(title, number) {
     if (number > 0) {
-        order.items[title] = number;
+        const existingItem = order.items.find(item => item.item_id === title);
+        if (existingItem) {
+            existingItem.quantity = number;
+        } else {
+            order.items.push({ item_id: title, quantity: number });
+        }
     } else {
-        delete order.items[title];
+        order.items = order.items.filter(item => item.item_id !== title);
     }
 }
 
 function updateCart() {
     const cartDiv = document.querySelector("#cart_list");
     cartDiv.innerHTML = "";
-    for (const item in order.items) {
+    for (const item of order.items) {
         const itemDiv = document.createElement("div");
-        itemDiv.textContent = `${item} - ${order.items[item]}`;
+        itemDiv.textContent = `${item.item_id} - ${item.quantity}`;
         cartDiv.appendChild(itemDiv);
     }
+    orderValueToForm()
 }
 
 function orderValueToForm() {
     document.getElementById('order_id').value = order.order_id;
-    document.getElementById('user_name').value = order.user.name;
-    document.getElementById('phone').value = order.user.phone;
+    //document.getElementById('user_name').value = order.user.name;
+    //document.getElementById('phone').value = order.user.phone;
     document.getElementById('start_date').value = order.duration.start_date;
     document.getElementById('end_date').value = order.duration.end_date;
-    //document.getElementById('item_id').value = order.items[0].item_id;
-    //document.getElementById('quantity').value = order.items[0].quantity;
+    document.getElementById('items').value = order.items;
     document.getElementById('price').value = order.price;
 }
 
@@ -165,14 +171,16 @@ const todayString = today.toISOString().split("T")[0];
 const tomorrowString = tomorrow.toISOString().split("T")[0];
 
 //時間選擇modal加上min屬性
-document.querySelector("#start_date").setAttribute("min", todayString);
-document.querySelector("#end_date").setAttribute("min", tomorrowString);
+startDateInput.setAttribute("min", todayString);
+endDateInput.setAttribute("min", tomorrowString);
 
 //兩個日期改變就抓資料
-document
-    .querySelector("#start_date")
-    .addEventListener("change", fetchData);
-document.querySelector("#end_date").addEventListener("change", fetchData);
+startDateInput.addEventListener("change", fetchData);
+endDateInput.addEventListener("change", fetchData);
+
+//監聽使用者名稱 電話
+userNameInput.addEventListener("input", (e) => order.user.name = e.target.value)
+phoneInput.addEventListener("input", (e) => order.user.phone = e.target.value)
 
 document.querySelector("#rental_form").addEventListener("submit", function (e) {
     e.preventDefault()
@@ -180,7 +188,9 @@ document.querySelector("#rental_form").addEventListener("submit", function (e) {
     const jsonData = JSON.stringify(order)
 
     fetch(this.action, {
-        method: this.method, body: jsonData, headers: {
+        method: this.method,
+        body: jsonData,
+        headers: {
             'Content-Type': 'application/json'
         }
     })

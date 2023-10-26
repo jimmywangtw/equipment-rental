@@ -41,6 +41,7 @@
           name="user_name"
           id="user_name"
           placeholder="辛晴好"
+          required
         />
         <label for="phone">手機:</label>
         <input
@@ -49,14 +50,14 @@
           id="phone"
           placeholder="0911555888"
           autocomplete="tel"
+          required
         />
       </div>
       <div>
         <input type="hidden" name="order_id" id="order_id" />
         <input type="hidden" name="start_date" id="start_date" />
         <input type="hidden" name="end_date" id="end_date" />
-        <input type="hidden" name="item_id" id="item_id" />
-        <input type="hidden" name="quantity" id="quantity" />
+        <input type="hidden" name="items" id="items" />
         <input type="hidden" name="price" id="price" />
       </div>
       <input type="submit" value="Submit" />
