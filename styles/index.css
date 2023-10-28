@@ -2,6 +2,7 @@
   padding: 0;
   margin: 0;
 }
+
 .cart {
   position: -webkit-sticky;
   position: sticky;
@@ -12,4 +13,14 @@
   margin-right: 20px;
   border: 1px solid black;
   color: blue;
+}
+
+.cart_duration {
+  margin: 5% auto;
+}
+
+#total_price {
+  margin: 5% auto;
+  text-align: center;
+  color: red;
 }

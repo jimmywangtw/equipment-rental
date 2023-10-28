@@ -5,16 +5,23 @@ const phoneInput = document.querySelector("#phone")
 const dateSelect = document.querySelector(".date_select");
 const rentalItems = document.querySelector("#rental_items");
 const ul = document.querySelector("#rental_items");
+const rentalTitle = document.querySelector(".rental_title");
+const totalDays = document.querySelector("#total_days");
+const cartDuration = document.querySelector(".cart_duration");
+const cartDiv = document.querySelector("#cart_list");
+const cartTotalPrice = document.querySelector("#total_price")
+
 const order = {
     order_id: "",
     user: { name: "", phone: "" },
     duration: { start_date: "start", end_date: "end" },
     items: [],
-    price: 0,
-}; // { order_id: "df4524", user:{name: "Kevin", phone: "0933445567"} duration: { start_date: "2023_10_22", end_date: "2023_10_29" }, items: [{item_id: "34243", quantity: 3}], price: 500 }
+    total_price: 0,
+}; // { order_id: "df4524", user:{name: "Kevin", phone: "0933445567"} duration: { start_date: "2023_10_22", end_date: "2023_10_29" }, items: [{title: "ice-claw", quantity: 3, price: 300}], price: 500 }]}
 
 function fetchData() {
     const dataURL = "https://dummyjson.com/products";
+
 
     if (startDateInput.value && endDateInput.value) {
         //更新訂單租借日期
@@ -26,37 +33,30 @@ function fetchData() {
             .then((data) => {
                 //顯示總租借日期
                 showDiffDays();
-                //將日期值插入表單 ???????好像不需要 日期包含在order了
-                // insertDateToForm();
                 //顯示商品選擇標題
                 showItemsSelectTitle();
                 //購物車顯示租借時間
                 showRentalDuration(startDateInput.value, endDateInput.value);
                 //重整清單先清空現有的
                 ul.innerHTML = "";
-                data.products.map((product, key) => {
-                    printItemsList(product, key);
-                });
+
+                data.products.map((product) => printItemsList(product));
                 console.log(data.products);
             })
             .catch((error) => console.error("錯誤：", error));
     }
 }
 
-// function insertDateToForm() {
-//     //時間選擇放在form裡面會出錯所以出此下策
-//     const hiddenStartDate = document.createElement("input");
-//     hiddenStartDate.type = "hidden";
-//     hiddenStartDate.name = "hiddenStartDate";
-//     hiddenStartDate.value = startDateInput.value;
-//     document.querySelector("form").appendChild(hiddenStartDate);
+function generateOrderNumber() {
+    const prefix = "ORD"; // 自定義前綴
+    const date = new Date();
+    const timestamp = date.getTime(); // 獲取時間戳記
+    const random = Math.floor(Math.random() * 10000); // 隨機數
 
-//     const hiddenEndDate = document.createElement("input");
-//     hiddenEndDate.type = "hidden";
-//     hiddenEndDate.name = "hiddenEndDate";
-//     hiddenEndDate.value = endDateInput.value;
-//     document.querySelector("form").appendChild(hiddenEndDate);
-// }
+    const orderNumber = `${prefix}_${timestamp}_${random}`; // 組合唯一的訂單號
+
+    return orderNumber;
+}
 
 function showDiffDays() {
     //計算日期差
@@ -66,29 +66,19 @@ function showDiffDays() {
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
     //顯示日期結果
-    const totalDays = document.querySelector("#total_days");
-    if (totalDays.children.length === 0) {
-        const p = document.createElement("p");
-        p.textContent = `共${diffDays}天`;
-        totalDays.appendChild(p);
-    } else {
-        const p = totalDays.children[0];
-        p.textContent = `共${diffDays}天`;
-    }
+    totalDays.textContent = `共${diffDays}天`
 }
 
 function showItemsSelectTitle() {
-    const h3 = document.querySelector(".rental_title");
-    h3.textContent = "請選擇租借項目";
+    rentalTitle.textContent = "請選擇租借項目";
 }
 
 function showRentalDuration(start, end) {
-    const cartDuration = document.querySelector(".cart_duration");
     cartDuration.textContent = `租借日期: ${start} ~ ${end}`;
 }
 
-function printItemsList(product, key) {
-    const { title, stock } = product;
+function printItemsList(product) {
+    const { title, stock, price } = product;
 
     const li = document.createElement("li");
     const buttonGroup = document.createElement("div");
@@ -97,28 +87,28 @@ function printItemsList(product, key) {
     const plusButton = document.createElement("button");
     const numberDisplay = document.createElement("span");
 
-    let number = 0;
+    let quantity = 0;
 
     minusButton.textContent = "-";
     plusButton.textContent = "+";
-    numberDisplay.textContent = number;
+    numberDisplay.textContent = quantity;
 
     minusButton.addEventListener("click", () => {
-        number = Math.max(0, number - 1); // 確保不會小於 0
-        numberDisplay.textContent = number;
-        handleItemObject(title, number);
+        quantity = Math.max(0, quantity - 1); // 確保不會小於 0
+        numberDisplay.textContent = quantity;
+        handleItemObject(title, quantity, price);
         updateCart();
 
     });
 
     plusButton.addEventListener("click", () => {
-        number = Math.min(stock, number + 1); // 確保不會大於庫存數量
-        numberDisplay.textContent = number;
-        handleItemObject(title, number);
+        quantity = Math.min(stock, quantity + 1); // 確保不會大於庫存數量
+        numberDisplay.textContent = quantity;
+        handleItemObject(title, quantity, price);
         updateCart();
     });
 
-    itemInfo.textContent = `${title}, 剩餘數量: ${stock}`;
+    itemInfo.textContent = `${title}, 剩餘數量: ${stock}, 租賃費用: ${price}`;
     buttonGroup.appendChild(minusButton);
     buttonGroup.appendChild(numberDisplay);
     buttonGroup.appendChild(plusButton);
@@ -129,39 +119,73 @@ function printItemsList(product, key) {
     ul.appendChild(li);
 }
 
-function handleItemObject(title, number) {
-    if (number > 0) {
-        const existingItem = order.items.find(item => item.item_id === title);
+function handleItemObject(title, quantity, price) {
+    if (quantity > 0) {
+        const existingItem = order.items.find(item => item.title === title);
         if (existingItem) {
-            existingItem.quantity = number;
+            existingItem.quantity = quantity;
+            existingItem.price = price * quantity
         } else {
-            order.items.push({ item_id: title, quantity: number });
+            order.items.push({ title, quantity, price });
         }
     } else {
-        order.items = order.items.filter(item => item.item_id !== title);
+        order.items = order.items.filter(item => item.title !== title);
     }
 }
 
 function updateCart() {
-    const cartDiv = document.querySelector("#cart_list");
     cartDiv.innerHTML = "";
+
     for (const item of order.items) {
         const itemDiv = document.createElement("div");
-        itemDiv.textContent = `${item.item_id} - ${item.quantity}`;
+        itemDiv.textContent = `${item.title} - ${item.quantity}, ${item.price}元`;
         cartDiv.appendChild(itemDiv);
     }
+    calculateTotalPrice()
     orderValueToForm()
 }
 
+function calculateTotalPrice() {
+    let totalPrice = order.items.reduce((acc, curr) => acc + curr.price, 0)
+    order.total_price = totalPrice
+    cartTotalPrice.textContent = `共${totalPrice}元`
+}
 function orderValueToForm() {
     document.getElementById('order_id').value = order.order_id;
-    //document.getElementById('user_name').value = order.user.name;
-    //document.getElementById('phone').value = order.user.phone;
     document.getElementById('start_date').value = order.duration.start_date;
     document.getElementById('end_date').value = order.duration.end_date;
     document.getElementById('items').value = order.items;
-    document.getElementById('price').value = order.price;
 }
+
+function showMessageAndRedirect(message, time, redirectUrl) {
+    document.body.innerHTML = `<div style="display: flex; justify-content: center; align-items: center; height: 100vh;"><h1>${message}</h1></div>`;
+    setTimeout(() => {
+        window.location.href = redirectUrl;
+    }, time);
+}
+
+function submitForm(e) {
+    e.preventDefault()
+    const orderID = generateOrderNumber()
+    order.order_id = orderID
+    const jsonData = JSON.stringify(order)
+
+    fetch(this.action, {
+        method: this.method,
+        body: jsonData,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(res => {
+            console.log(res)
+            if (res.ok) {
+                showMessageAndRedirect("訂單成功送出 即將跳回首頁", 3000, "/")
+            }
+        })
+        .catch(err => showMessageAndRedirect(`錯誤訊息: ${err} 即將跳回首頁`, 3000, "/"))
+}
+
 
 //設定時間欄位的最小日期
 const today = new Date();
@@ -182,18 +206,4 @@ endDateInput.addEventListener("change", fetchData);
 userNameInput.addEventListener("input", (e) => order.user.name = e.target.value)
 phoneInput.addEventListener("input", (e) => order.user.phone = e.target.value)
 
-document.querySelector("#rental_form").addEventListener("submit", function (e) {
-    e.preventDefault()
-
-    const jsonData = JSON.stringify(order)
-
-    fetch(this.action, {
-        method: this.method,
-        body: jsonData,
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-        .then(res => console.log(res))
-        .catch(err => console.error(err))
-})
+document.querySelector("#rental_form").addEventListener("submit", submitForm)
