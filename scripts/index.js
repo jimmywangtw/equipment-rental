@@ -1,15 +1,14 @@
-const endDateInput = document.querySelector("#end_date");
-const startDateInput = document.querySelector("#start_date");
-const userNameInput = document.querySelector("#user_name")
+const endDateInput = document.querySelector("#end-date");
+const startDateInput = document.querySelector("#start-date");
+const userNameInput = document.querySelector("#user-name")
 const phoneInput = document.querySelector("#phone")
-const dateSelect = document.querySelector(".date_select");
-const rentalItems = document.querySelector("#rental_items");
-const ul = document.querySelector("#rental_items");
-const rentalTitle = document.querySelector(".rental_title");
-const totalDays = document.querySelector("#total_days");
-const cartDuration = document.querySelector(".cart_duration");
-const cartDiv = document.querySelector("#cart_list");
-const cartTotalPrice = document.querySelector("#total_price")
+const dateSelect = document.querySelector(".date-select");
+const rentalItems = document.querySelector("#rental-items");
+const rentalTitle = document.querySelector(".rental-title");
+const totalDays = document.querySelector("#total-days");
+const cartDuration = document.querySelector(".cart-duration");
+const cartDiv = document.querySelector("#cart-list");
+const cartTotalPrice = document.querySelector("#total-price")
 
 const order = {
     order_id: "",
@@ -17,7 +16,7 @@ const order = {
     duration: { start_date: "start", end_date: "end" },
     items: [],
     total_price: 0,
-}; // { order_id: "df4524", user:{name: "Kevin", phone: "0933445567"} duration: { start_date: "2023_10_22", end_date: "2023_10_29" }, items: [{title: "ice-claw", quantity: 3, price: 300}], price: 500 }]}
+}; // { order-id: "df4524", user:{name: "Kevin", phone: "0933445567"} duration: { start-date: "2023-10-22", end-date: "2023-10-29" }, items: [{title: "ice-claw", quantity: 3, price: 300}], total-price: 900 }]}
 
 function fetchData() {
     const dataURL = "https://dummyjson.com/products";
@@ -38,7 +37,7 @@ function fetchData() {
                 //購物車顯示租借時間
                 showRentalDuration(startDateInput.value, endDateInput.value);
                 //重整清單先清空現有的
-                ul.innerHTML = "";
+                rentalItems.innerHTML = "";
 
                 data.products.map((product) => printItemsList(product));
                 console.log(data.products);
@@ -53,7 +52,7 @@ function generateOrderNumber() {
     const timestamp = date.getTime(); // 獲取時間戳記
     const random = Math.floor(Math.random() * 10000); // 隨機數
 
-    const orderNumber = `${prefix}_${timestamp}_${random}`; // 組合唯一的訂單號
+    const orderNumber = `${prefix}-${timestamp}-${random}`; // 組合唯一的訂單號
 
     return orderNumber;
 }
@@ -116,7 +115,7 @@ function printItemsList(product) {
     li.appendChild(itemInfo);
     li.appendChild(buttonGroup);
 
-    ul.appendChild(li);
+    rentalItems.appendChild(li);
 }
 
 function handleItemObject(title, quantity, price) {
@@ -151,18 +150,12 @@ function calculateTotalPrice() {
     cartTotalPrice.textContent = `共${totalPrice}元`
 }
 function orderValueToForm() {
-    document.getElementById('order_id').value = order.order_id;
-    document.getElementById('start_date').value = order.duration.start_date;
-    document.getElementById('end_date').value = order.duration.end_date;
+    document.getElementById('order-id').value = order.order_id;
+    document.getElementById('start-date').value = order.duration.start_date;
+    document.getElementById('end-date').value = order.duration.end_date;
     document.getElementById('items').value = order.items;
 }
 
-function showMessageAndRedirect(message, time, redirectUrl) {
-    document.body.innerHTML = `<div style="display: flex; justify-content: center; align-items: center; height: 100vh;"><h1>${message}</h1></div>`;
-    setTimeout(() => {
-        window.location.href = redirectUrl;
-    }, time);
-}
 
 function submitForm(e) {
     e.preventDefault()
@@ -186,7 +179,12 @@ function submitForm(e) {
         .catch(err => showMessageAndRedirect(`錯誤訊息: ${err} 即將跳回首頁`, 3000, "/"))
 }
 
-
+function showMessageAndRedirect(message, time, redirectUrl) {
+    document.body.innerHTML = `<div style="display: flex; justify-content: center; align-items: center; height: 100vh;"><h1>${message}</h1></div>`;
+    setTimeout(() => {
+        window.location.href = redirectUrl;
+    }, time);
+}
 //設定時間欄位的最小日期
 const today = new Date();
 const tomorrow = new Date(today);
@@ -206,4 +204,4 @@ endDateInput.addEventListener("change", fetchData);
 userNameInput.addEventListener("input", (e) => order.user.name = e.target.value)
 phoneInput.addEventListener("input", (e) => order.user.phone = e.target.value)
 
-document.querySelector("#rental_form").addEventListener("submit", submitForm)
+document.querySelector("#rental-form").addEventListener("submit", submitForm)

@@ -4,9 +4,23 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>後台管理_裝備預約網站</title>
+    <link href="node_modules/quill/dist/quill.snow.css" rel="stylesheet" />
   </head>
   <body>
     <h1>後台管理頁面</h1>
+    <div id="quill-content"></div>
+    <form
+      id="editor-form"
+      method="post"
+      action="http://localhost:8000/submit-form"
+    >
+      <div>
+        <input type="hidden" name="description" />
+        <div id="editor-container"></div>
+      </div>
+      <input type="submit" value="儲存修改" />
+    </form>
   </body>
-  <script></script>
+  <script src="node_modules/quill/dist/quill.min.js"></script>
+  <script type="module" src="./scripts/admin.js"></script>
 </html>

@@ -12,45 +12,45 @@
       <a href="admin.html">管理者登入</a>
     </nav>
     <h3>請選擇租借時間</h3>
-    <div class="date_select">
-      <label for="start_date">起始日期：</label>
-      <input type="date" id="start_date" name="start_date" required />
-      <label for="end_date">結束日期：</label>
-      <input type="date" id="end_date" name="end_date" required />
-      <div id="total_days"></div>
+    <div class="date-select">
+      <label for="start-date">起始日期：</label>
+      <input type="date" id="start-date" name="start-date" required />
+      <label for="end-date">結束日期：</label>
+      <input type="date" id="end-date" name="end-date" required />
+      <div id="total-days"></div>
     </div>
 
     <div class="cart">
-      <h3 class="cart_title">購物車</h3>
-      <div class="cart_duration"></div>
-      <div id="cart_list">
+      <h3 class="cart-title">購物車</h3>
+      <div class="cart-duration"></div>
+      <div id="cart-list">
         <p>目前無選擇任何商品</p>
       </div>
-      <div id="total_price"></div>
+      <div id="total-price"></div>
     </div>
 
     <div class="rental">
-      <h3 class="rental_title"></h3>
-      <ul id="rental_items"></ul>
+      <h3 class="rental-title"></h3>
+      <ul id="rental-items"></ul>
     </div>
 
     <form
-      id="rental_form"
+      id="rental-form"
       method="post"
-      action="http://localhost:3000/submit-form"
+      action="http://localhost:8000/submit-form"
     >
       <div>
-        <label for="user_name">姓名:</label>
+        <label for="user-name">姓名:</label>
         <input
           type="text"
-          name="user_name"
-          id="user_name"
+          name="user-name"
+          id="user-name"
           placeholder="辛晴好"
           required
         />
         <label for="phone">手機:</label>
         <input
-          type="text"
+          type="tel"
           name="phone"
           id="phone"
           placeholder="0911555888"
@@ -59,14 +59,14 @@
         />
       </div>
       <div>
-        <input type="hidden" name="order_id" id="order_id" />
-        <input type="hidden" name="start_date" id="start_date" />
-        <input type="hidden" name="end_date" id="end_date" />
+        <input type="hidden" name="order-id" id="order-id" />
+        <input type="hidden" name="start-date" id="start-date" />
+        <input type="hidden" name="end-date" id="end-date" />
         <input type="hidden" name="items" id="items" />
       </div>
-      <input type="submit" value="Submit" />
+      <input type="submit" value="送出表單" />
     </form>
-
-    <script src="./scripts/index.js"></script>
   </body>
+  <script type="module" src="./scripts/index.js"></script>
+  <script type="module" src="./helper/helper.js"></script>
 </html>
