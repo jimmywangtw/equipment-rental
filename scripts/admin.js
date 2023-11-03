@@ -6,33 +6,24 @@
 const editorForm = document.querySelector("#editor-form");
 const title = document.querySelector("#title")
 const imagesContainer = document.querySelector("#images-container")
-const spec = document.querySelector("#spec")
-const price = document.querySelector("#price")
-const stock = document.querySelector("#stock")
 const quillContent = document.querySelector("#quill-content")
 const specContainer = document.querySelector("#spec-container")
+const specInputsButton = document.querySelector(".spec-inputs-button")
 
 title.addEventListener("input", (e) => itemInfo.title = e.target.value)
-spec.addEventListener("input", (e) => specObj.spec_name = e.target.value)
-price.addEventListener("input", (e) => specObj.price = e.target.value)
-stock.addEventListener("input", (e) => specObj.stock = e.target.value)
 quillContent.addEventListener("input", (e) => itemInfo.description = e.target.value)
 imagesContainer.addEventListener('input', checkImagesInput);
+specInputsButton.addEventListener("click", addSpecDiv)
+editorForm.addEventListener("submit", submitForm);
 
 const itemInfo = {
     title: "",
-    spec: [],
+    specs: [],
     images: [],
     quill_content: ""
 };
 
-const specObj = {
-    item_id: "",
-    spec_name: "",
-    price: 0,
-    stock: 0,
-}
-
+// quill section
 const toolbarOptions = [
     [{ font: [] }],
     [{ header: [1, 2, 3, 4, 5, 6, false] }],
@@ -52,7 +43,7 @@ const quill = new Quill("#quill-content", {
 
 
 
-
+// function section
 function checkImagesInput() {
     const imageInputArr = Array.from(document.querySelectorAll(".image"))
     const emptyInputs = imageInputArr.filter(input => input.value === "")
@@ -66,10 +57,10 @@ function checkImagesInput() {
 
 function addImageInput() {
     const newInput = document.createElement("input")
-    let imagesInputCount = 1
+
 
     newInput.type = "url"
-    newInput.name = "image" + (++imagesInputCount)
+    newInput.name = "image"
     newInput.className = "image"
     newInput.placeholder = "請輸入圖片網址"
 
@@ -78,28 +69,71 @@ function addImageInput() {
     imagesContainer.appendChild(document.createElement("br"))
 }
 
+function addImagesToArr() {
+    const inputs = document.querySelectorAll(".image")
+    inputs.forEach(input => {
+        const url = input.value
+        if (url) {
+            itemInfo.images.push(url)
+        }
+    })
+}
 
-function addSpecDiv() {
-    let specInputCount = 2
+function addSpecDiv(e) {
+    e.preventDefault()
+
     const newDiv = document.createElement("div")
-
+    newDiv.className = "spec-inputs"
 
     newDiv.innerHTML = `        
-    <div class="spec-inputs">
-        <label for="spec${specInputCount}">規格：</label><br />
-        <input type="text" id="spec" name="spec${specInputCount}" /><br /><br />
+    <label
+    >規格：
+    <input
+      type="text"
+      class="spec"
+      name="spec"
+      aria-label="specification"
+      title="specification"
+      placeholder="請輸入規格" /></label
+  ><br /><br />
 
-        <label for="price${specInputCount}">價格：</label><br />
-        <input type="number" id="price" name="price${specInputCount}" /><br /><br />
+  <label
+    >價格：
+    <input
+      type="number"
+      class="price"
+      name="price"
+      aria-label="price"
+      title="price"
+      placeholder="請輸入價格"
+    /> </label
+  ><br /><br />
 
-        <label for="stock${specInputCount}">庫存：</label><br />
-        <input type="number" id="stock" name="stock${specInputCount}" /><br /><br /><br />
-
-    </div>
+  <label
+    >庫存：
+    <input
+      type="number"
+      class="stock"
+      name="stock"
+      aria-label="stock"
+      title="stock"
+      placeholder="請輸入庫存"
+    /> </label
+  ><br /><br /><br />
 `;
 
-    specInputCount++
     specContainer.appendChild(newDiv)
+}
+
+function addSpecObjToArr() {
+    const inputs = document.querySelectorAll(".spec-inputs")
+    inputs.forEach(input => {
+        const spec = input.querySelector('.spec').value;
+        const price = input.querySelector('.price').value;
+        const stock = input.querySelector('.stock').value;
+        const obj = { spec, price, stock };
+        itemInfo.specs.push(obj);
+    })
 }
 
 function showMessageAndRedirect(message, time, redirectUrl) {
@@ -112,10 +146,14 @@ function showMessageAndRedirect(message, time, redirectUrl) {
 function submitForm(e) {
     e.preventDefault();
 
-    itemInfo.quillContent = JSON.stringify(quill.root.innerHTML)
+    addImagesToArr()
+    addSpecObjToArr()
+    itemInfo.quill_content = quill.root.innerHTML
 
-    console.log(itemInfo.quillContent);
     const jsonData = JSON.stringify(itemInfo)
+
+    console.log(jsonData)
+    return false;
 
     fetch(this.action, {
         method: this.method,
@@ -135,7 +173,7 @@ function submitForm(e) {
             console.error(err)
         );
 }
-editorForm.addEventListener("submit", submitForm);
+
 
 // ****test quill output*****
 // const newDiv = document.createElement("div")

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-TW">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,34 +8,72 @@
   </head>
   <body>
     <h1>後台管理頁面</h1>
+    <h2>新增商品</h2>
     <form
       id="editor-form"
       method="post"
       action="http://localhost:8000/submit-form"
     >
-      <label for="title">商品名稱：</label><br />
-      <input type="text" id="title" name="title" /><br /><br />
+      <label
+        >商品名稱：
+        <input
+          type="text"
+          id="title"
+          name="title"
+          aria-label="title"
+          title="title"
+          placeholder="請輸入名稱" /></label
+      ><br /><br />
 
       <div id="images-container">
-        <label for="image1">圖片網址：</label><br />
-        <input
-          type="url"
-          name="image1"
-          class="image"
-          placeholder="請輸入圖片網址"
-        /><br /><br />
+        <label
+          >圖片網址：
+          <input
+            type="url"
+            name="image"
+            class="image"
+            placeholder="請輸入圖片網址"
+          /> </label
+        ><br /><br />
       </div>
 
+      <button class="spec-inputs-button" type="button">新增其他規格</button>
       <div id="spec-container">
         <div class="spec-inputs">
-          <label for="spec1">規格：</label><br />
-          <input type="text" id="spec" name="spec1" /><br /><br />
+          <label
+            >規格：
+            <input
+              type="text"
+              class="spec"
+              name="spec"
+              aria-label="specification"
+              title="specification"
+              placeholder="請輸入規格 非必填" /></label
+          ><br /><br />
 
-          <label for="price1">價格：</label><br />
-          <input type="number" id="price" name="price1" /><br /><br />
+          <label
+            >價格：
+            <input
+              type="number"
+              class="price"
+              name="price"
+              aria-label="price"
+              title="price"
+              placeholder="請輸入價格"
+            /> </label
+          ><br /><br />
 
-          <label for="stock1">庫存：</label><br />
-          <input type="number" id="stock" name="stock1" /><br /><br /><br />
+          <label
+            >庫存：
+            <input
+              type="number"
+              class="stock"
+              name="stock"
+              aria-label="stock"
+              title="stock"
+              placeholder="請輸入庫存"
+            /> </label
+          ><br /><br /><br />
         </div>
       </div>
       <label for="quill-content">商品描述：</label><br />
