@@ -1,16 +1,37 @@
 // ItemInfo 
-// 產生item_id, 品名 包含不同規格, 數量, 價錢 包含不同天數不同價格, 圖片超連結放array, 
+// 產生item_id, 品名 包含不同規格, 數量, 價錢, 圖片超連結放array, 
+// 分頁
+// 讀取訂單
 
 const editorForm = document.querySelector("#editor-form");
+const title = document.querySelector("#title")
+const imagesContainer = document.querySelector("#images-container")
+const spec = document.querySelector("#spec")
+const price = document.querySelector("#price")
+const stock = document.querySelector("#stock")
+const quillContent = document.querySelector("#quill-content")
+const specContainer = document.querySelector("#spec-container")
+
+title.addEventListener("input", (e) => itemInfo.title = e.target.value)
+spec.addEventListener("input", (e) => specObj.spec_name = e.target.value)
+price.addEventListener("input", (e) => specObj.price = e.target.value)
+stock.addEventListener("input", (e) => specObj.stock = e.target.value)
+quillContent.addEventListener("input", (e) => itemInfo.description = e.target.value)
+imagesContainer.addEventListener('input', checkImagesInput);
 
 const itemInfo = {
-    item_id: "",
     title: "",
-    price: 0,
-    quantity: 0,
+    spec: [],
     images: [],
-    quillContent: "",
+    quill_content: ""
 };
+
+const specObj = {
+    item_id: "",
+    spec_name: "",
+    price: 0,
+    stock: 0,
+}
 
 const toolbarOptions = [
     [{ font: [] }],
@@ -23,10 +44,63 @@ const toolbarOptions = [
     [{ align: [] }],
     ["clean"], // remove formatting button
 ];
-const quill = new Quill("#editor-container", {
+
+const quill = new Quill("#quill-content", {
     modules: { toolbar: toolbarOptions },
     theme: "snow",
 });
+
+
+
+
+function checkImagesInput() {
+    const imageInputArr = Array.from(document.querySelectorAll(".image"))
+    const emptyInputs = imageInputArr.filter(input => input.value === "")
+
+
+    if (emptyInputs.length === 0) {
+        addImageInput()
+    }
+
+}
+
+function addImageInput() {
+    const newInput = document.createElement("input")
+    let imagesInputCount = 1
+
+    newInput.type = "url"
+    newInput.name = "image" + (++imagesInputCount)
+    newInput.className = "image"
+    newInput.placeholder = "請輸入圖片網址"
+
+    imagesContainer.appendChild(newInput)
+    imagesContainer.appendChild(document.createElement("br"))
+    imagesContainer.appendChild(document.createElement("br"))
+}
+
+
+function addSpecDiv() {
+    let specInputCount = 2
+    const newDiv = document.createElement("div")
+
+
+    newDiv.innerHTML = `        
+    <div class="spec-inputs">
+        <label for="spec${specInputCount}">規格：</label><br />
+        <input type="text" id="spec" name="spec${specInputCount}" /><br /><br />
+
+        <label for="price${specInputCount}">價格：</label><br />
+        <input type="number" id="price" name="price${specInputCount}" /><br /><br />
+
+        <label for="stock${specInputCount}">庫存：</label><br />
+        <input type="number" id="stock" name="stock${specInputCount}" /><br /><br /><br />
+
+    </div>
+`;
+
+    specInputCount++
+    specContainer.appendChild(newDiv)
+}
 
 function showMessageAndRedirect(message, time, redirectUrl) {
     document.body.innerHTML = `<div style="display: flex; justify-content: center; align-items: center; height: 100vh;"><h1>${message}</h1></div>`;
@@ -37,8 +111,6 @@ function showMessageAndRedirect(message, time, redirectUrl) {
 
 function submitForm(e) {
     e.preventDefault();
-    console.log(quill.root.innerHTML)
-
 
     itemInfo.quillContent = JSON.stringify(quill.root.innerHTML)
 

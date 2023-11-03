@@ -8,19 +8,43 @@
   </head>
   <body>
     <h1>後台管理頁面</h1>
-    <div id="quill-content"></div>
     <form
       id="editor-form"
       method="post"
       action="http://localhost:8000/submit-form"
     >
-      <div>
-        <input type="hidden" name="description" />
-        <div id="editor-container"></div>
+      <label for="title">商品名稱：</label><br />
+      <input type="text" id="title" name="title" /><br /><br />
+
+      <div id="images-container">
+        <label for="image1">圖片網址：</label><br />
+        <input
+          type="url"
+          name="image1"
+          class="image"
+          placeholder="請輸入圖片網址"
+        /><br /><br />
       </div>
+
+      <div id="spec-container">
+        <div class="spec-inputs">
+          <label for="spec1">規格：</label><br />
+          <input type="text" id="spec" name="spec1" /><br /><br />
+
+          <label for="price1">價格：</label><br />
+          <input type="number" id="price" name="price1" /><br /><br />
+
+          <label for="stock1">庫存：</label><br />
+          <input type="number" id="stock" name="stock1" /><br /><br /><br />
+        </div>
+      </div>
+      <label for="quill-content">商品描述：</label><br />
+      <div id="quill-content"></div>
+      <br /><br />
+
       <input type="submit" value="儲存修改" />
     </form>
   </body>
   <script src="node_modules/quill/dist/quill.min.js"></script>
-  <script type="module" src="./scripts/admin.js"></script>
+  <script src="./scripts/admin.js"></script>
 </html>
