@@ -2,6 +2,20 @@
 // 產生item_id, 品名 包含不同規格, 數量, 價錢, 圖片超連結放array, 
 // 分頁
 // 讀取訂單
+const dotenv = require('dotenv')
+
+const firebaseConfig = {
+    apiKey: process.env.API_KEY,
+    authDomain: process.env.AUTH_DOMAIN,
+    projectId: process.env.PROJECT_ID,
+    storageBucket: process.env.STORAGE_BUCKET,
+    messagingSenderId: process.env.MESSAGING_SENDER_ID,
+    appId: process.env.APP_ID
+};
+
+console.log(firebaseConfig.authDomain)
+
+
 
 const editorForm = document.querySelector("#editor-form");
 const title = document.querySelector("#title")
@@ -16,6 +30,7 @@ imagesContainer.addEventListener('input', checkImagesInput);
 specInputsButton.addEventListener("click", addSpecDiv)
 editorForm.addEventListener("submit", submitForm);
 
+// itemInfo = {title:"冰爪", specs:[{spec, price, stock}, {"55公分", 200, 5}], images:["url1", "url2"], quill_content: "format"}
 const itemInfo = {
     title: "",
     specs: [],
